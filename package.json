@@ -1,13 +1,13 @@
 {
-    "name": "template",
+    "name": "git-connector",
     "version": "0.0.1",
-    "description": "Template for nodejs cli app with typescript",
+    "description": "Git folder or file synchronization",
     "main": "index.js",
     "directories": {
         "lib": "lib"
     },
     "bin": {
-        "template-cli": "./index.js"
+        "git-connector": "./index.js"
     },
     "scripts": {
         "up": "ncu && ncu -u && rimraf ./package-lock.json && npm i",
@@ -20,19 +20,19 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/samurayii/template-project-ts-cli.git"
+        "url": "git+https://github.com/samurayii/git-connector.git"
     },
     "keywords": [
-        "templates",
-        "typescript",
+        "synchronization",
+        "git",
         "cli"
     ],
     "author": "Nuzhnov A.A.",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/samurayii/template-project-ts-cli/issues"
+        "url": "https://github.com/samurayii/git-connector/issues"
     },
-    "homepage": "https://github.com/samurayii/template-project-ts-cli.git#readme",
+    "homepage": "https://github.com/samurayii/git-connector.git#readme",
     "devDependencies": {
         "@types/chalk": "^2.2.0",
         "@types/find-package-json": "^1.1.1",
@@ -57,5 +57,10 @@
             "devDependencies",
             "scripts"
         ]
+    },
+    "dependencies": {
+        "chalk": "^4.1.0",
+        "commander": "^6.0.0",
+        "find-package-json": "^1.2.0"
     }
 }
