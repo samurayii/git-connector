@@ -1,7 +1,9 @@
 export interface IAppConfig {
     webhook?: string
-    signal: string
     interval: number
     exec: string
-    target: string
+    target: string[]
+    update: boolean
+    tmp: string
+    cwd: string
 }
