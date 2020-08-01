@@ -1,0 +1,6 @@
+{
+    "arg1-1": "arg1-1-val",
+    "arg1-2": {
+        "sub-arg1-2": "sub-arg1-2-val"
+    }
+}

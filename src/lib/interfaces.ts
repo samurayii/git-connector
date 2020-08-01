@@ -6,4 +6,5 @@ export interface IAppConfig {
     update: boolean
     tmp: string
     cwd: string
+    keys: string[]
 }

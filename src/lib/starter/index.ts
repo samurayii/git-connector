@@ -13,11 +13,8 @@ export class Starter extends EventEmitter {
         private readonly _command: string,
         private readonly _webhook?: string,
     ) {
-
         super();
-
         this._update_flag = false;
-
     }
 
     start (): void {
