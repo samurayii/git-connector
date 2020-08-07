@@ -98,32 +98,44 @@ if (!fs.existsSync(config.cwd)) {
     process.exit(1);
 }
 
-for (let item of config.target) {
-    item = item.trim();
-    if (!/^http(s|)\:\/\/(.*\:.*@|)[a-z0-9]{1}[-a-z0-9.]{0,128}(\:[0-9]{1,5}|)\/.*\.git\:[-a-z0-9._]*\:\/[-a-z0-9._\/]*\:[-a-z0-9._\/]*$/gi.test(item)) {
-        console.error(chalk.red("Error. Target item not correspond regexp /^http(s|)\\:\\/\\/(.*\\:.*@|)[a-z0-9]{1}[-a-z0-9.]{0,128}(\\:[0-9]{1,5}|)\\/.*\\.git\\:[-a-z0-9._]*\\:\\/[-a-z0-9_\\/]*\\:[-a-z0-9_\\/]*$/gi"));
-        process.exit(1);
+if (Array.isArray(config.target)) {
+
+    for (let item of config.target) {
+        item = item.trim();
+        if (!/^http(s|)\:\/\/(.*\:.*@|)[a-z0-9]{1}[-a-z0-9.]{0,128}(\:[0-9]{1,5}|)\/.*\.git\:[-a-z0-9._]*\:\/[-a-z0-9._\/]*\:[-a-z0-9._\/]*$/gi.test(item)) {
+            console.error(chalk.red("Error. Target item not correspond regexp /^http(s|)\\:\\/\\/(.*\\:.*@|)[a-z0-9]{1}[-a-z0-9.]{0,128}(\\:[0-9]{1,5}|)\\/.*\\.git\\:[-a-z0-9._]*\\:\\/[-a-z0-9_\\/]*\\:[-a-z0-9_\\/]*$/gi"));
+            process.exit(1);
+        }
     }
+
+} else {
+    config.target = [];
 }
 
-for (let item of config.keys) {
-    
-    item = item.trim();
-    
-    const full_file_path = resolve(process.cwd(), item);
+if (Array.isArray(config.keys)) {
 
-    if (!fs.existsSync(full_file_path)) {
-        console.error(chalk.red(`Error. Keys file ${item} not found`));
-        process.exit(1);
+    for (let item of config.keys) {
+    
+        item = item.trim();
+        
+        const full_file_path = resolve(process.cwd(), item);
+    
+        if (!fs.existsSync(full_file_path)) {
+            console.error(chalk.red(`Error. Keys file ${item} not found`));
+            process.exit(1);
+        }
+    
+        const stat = fs.statSync(full_file_path);
+    
+        if (!stat.isFile()) {
+            console.error(chalk.red(`Error. Keys path ${item} not a file`));
+            process.exit(1);
+        }
+    
     }
 
-    const stat = fs.statSync(full_file_path);
-
-    if (!stat.isFile()) {
-        console.error(chalk.red(`Error. Keys path ${item} not a file`));
-        process.exit(1);
-    }
-
+} else {
+    config.keys = [];
 }
 
 if (typeof program.update !== "boolean") {
