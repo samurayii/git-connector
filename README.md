@@ -2,7 +2,7 @@
 
 Git folder or file synchronization.
 
-Git-connector is an middleware for launch application. Before launching application, git-connector downloads files or/and folders, parsing and then git-connector watching changes.
+Git-connector is a middleware for application launch. Before launching application, git-connector download files or folders, parse it and then watching for changes.
 
 install: `npm i git-connector -g`
 
