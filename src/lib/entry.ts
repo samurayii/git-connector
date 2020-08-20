@@ -138,11 +138,6 @@ if (Array.isArray(config.keys)) {
     config.keys = [];
 }
 
-if (typeof program.update !== "boolean") {
-    console.error(chalk.red("Error. Target key is empty"));
-    process.exit(1);
-}
-
 try {
     execSync("git --version");
 } catch (error) {
