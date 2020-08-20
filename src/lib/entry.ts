@@ -17,7 +17,7 @@ program.requiredOption("-e, --exec <type>", "Start command application (Environm
 program.requiredOption("-t, --target [letters...]", "Watching string/array of string git repository (Environment variable: GIT_CONNECTOR_TARGET=<string[]>). Example: --target https://user:password@mygit.ru/repository.git:master:/path_repository:/path_target");
 program.option("-u, --update", "Flag for watch target update (Environment variable: GIT_CONNECTOR_UPDATE=(true|false)).", false);
 program.option("-tmp, --tmp <type>", "Path to tmp folder (Environment variable: GIT_CONNECTOR_TMP=<type>). Example: --tmp /my_tmp", "tmp");
-program.option("-c, --cwd <type>", "Path to workdir (Environment variable: GIT_CONNECTOR_CWD=<type>). Example: --tmp /my_cwd", `${process.cwd()}`);
+program.option("-c, --cwd <type>", "Path to workdir (Environment variable: GIT_CONNECTOR_CWD=<type>). Example: --cwd /my_cwd", `${process.cwd()}`);
 
 program.parse(process.argv);
 
