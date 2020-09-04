@@ -20,3 +20,7 @@ process.on("SIGTERM", () => {
     console.log("💀 Termination signal received 💀");
     process.exit();
 });
+
+setTimeout( () => {
+    process.exit();
+}, 2000);

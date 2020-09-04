@@ -22,13 +22,15 @@ export class Watcher extends EventEmitter {
     private readonly _repository_folder: string
     private readonly _hash_folder: string
     private _id_interval: ReturnType<typeof setTimeout>
+    private _keys: TKeys
     
     constructor (
         private readonly _repository: string,
         private readonly _branch: string,
         private readonly _tmp_folder: string,
         private readonly _targets: TTarget,
-        private readonly _keys: TKeys = {}
+        private readonly _keys_path: string[],
+        private readonly _scan_hidden: boolean
     ) {
 
         super();
@@ -58,7 +60,71 @@ export class Watcher extends EventEmitter {
 
     }
 
-    _parseKeys (body: string): string {
+    private _scanThisPath (path: string) {
+
+        if ((/^.*(\/|\\)(\.|\.\.)[^\/\\]*$/gi).test(path) === true && this._scan_hidden === false) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private _loadKeys (): void {
+
+        this._keys = {};
+
+        for (const key_path of this._keys_path) {
+
+            const full_file_path = resolve(process.cwd(), key_path.trim());
+
+            if (!fs.existsSync(full_file_path)) {
+                console.error(chalk.red(`Error. Keys file ${full_file_path} not found`));
+                continue;
+            }
+        
+            const stat = fs.statSync(full_file_path);
+        
+            if (!stat.isFile()) {
+                console.error(chalk.red(`Error. Keys path ${full_file_path} not file`));
+                continue;
+            }
+
+            try {
+        
+                let keys_file_text = fs.readFileSync(full_file_path).toString();
+        
+                for (const env_name in process.env) {
+        
+                    const env_arg = process.env[env_name];
+                    const reg = new RegExp("\\${"+env_name+"}", "gi");
+        
+                    keys_file_text = keys_file_text.replace(reg, env_arg);
+                }
+                
+                const keys_file_json = JSON.parse(keys_file_text);
+        
+                for (const key_name in keys_file_json) {
+        
+                    let key = keys_file_json[key_name];
+        
+                    if (typeof key === "object") {
+                        key = JSON.stringify(key);
+                    }
+        
+                    this._keys[key_name] = key;
+                }
+        
+        
+            } catch (error) {
+                console.error(`Error parsing keys file ${full_file_path}. ${error.message}`);
+                console.error(chalk.red(error.stack));
+                return;
+            }
+        
+        }
+    }
+
+    private _parseKeys (body: string): string {
 
         for (const key_name in this._keys) {
 
@@ -72,7 +138,11 @@ export class Watcher extends EventEmitter {
         return body;
     }
 
-    _synchronizeFile (target: string, destination: string): boolean {
+    private _synchronizeFile (target: string, destination: string): boolean {
+
+        if (!this._scanThisPath(target)) {
+            return false;
+        }
 
         console.log(`Scanning file ${target}`);
 
@@ -90,6 +160,7 @@ export class Watcher extends EventEmitter {
         }
 
         if (!fs.existsSync(destination_dirname)) {
+            console.log(destination_dirname);
             fs.mkdirSync(destination_dirname);
         }
 
@@ -120,8 +191,12 @@ export class Watcher extends EventEmitter {
 
     }
 
-    _synchronizeDirectory (target: string, destination: string): boolean {
+    private _synchronizeDirectory (target: string, destination: string): boolean {
 
+        if (!this._scanThisPath(target)) {
+            return false;
+        }
+console.log(target);
         let update_flag = false;
 
         console.log(`Scanning directory ${target}`);
@@ -152,7 +227,7 @@ export class Watcher extends EventEmitter {
 
     }
 
-    _synchronize (): boolean {
+    private _synchronize (): boolean {
         
         let update_flag = false;
 
@@ -216,6 +291,9 @@ export class Watcher extends EventEmitter {
                 const update_flag = this._synchronize();
 
                 if (update_flag === true) {
+
+                    this._loadKeys();
+
                     console.log("Emit change event");
                     this.emit("update");
                 }

@@ -6,3 +6,4 @@ dist
 Thumbs.db
 package-lock.json
 tmp
+sync_data

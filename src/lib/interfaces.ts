@@ -7,4 +7,5 @@ export interface IAppConfig {
     tmp: string
     cwd: string
     keys: string[]
+    scan_hidden: boolean
 }

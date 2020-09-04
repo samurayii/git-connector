@@ -4,7 +4,6 @@ import { execSync } from "child_process";
 import * as finder from "find-package-json";
 import { IAppConfig } from "./interfaces";
 import * as fs from "fs";
-import { resolve } from "path";
 
 const pkg = finder(__dirname).next().value;
 
@@ -18,6 +17,7 @@ program.requiredOption("-t, --target [letters...]", "Watching string/array of st
 program.option("-u, --update", "Flag for watch target update (Environment variable: GIT_CONNECTOR_UPDATE=(true|false)).", false);
 program.option("-tmp, --tmp <type>", "Path to tmp folder (Environment variable: GIT_CONNECTOR_TMP=<type>). Example: --tmp /my_tmp", "tmp");
 program.option("-c, --cwd <type>", "Path to workdir (Environment variable: GIT_CONNECTOR_CWD=<type>). Example: --cwd /my_cwd", `${process.cwd()}`);
+program.option("-sh, --scan_hidden", "Scanning hidden files and folders (Environment variable: GIT_CONNECTOR_SCAN_HIDDEN=(true|false)).", false);
 
 program.parse(process.argv);
 
@@ -29,36 +29,44 @@ const config: IAppConfig = {
     update: program.update,
     tmp: program.tmp,
     cwd: program.cwd,
-    keys: program.keys
+    keys: program.keys,
+    scan_hidden: program.scan_hidden
 };
 
 if (process.env["GIT_CONNECTOR_WEBHOOK"] !== undefined) {
-    config.webhook = process.env["GIT_CONNECTOR_WEBHOOK"];
+    config.webhook = process.env["GIT_CONNECTOR_WEBHOOK"].trim();
 }
 if (process.env["GIT_CONNECTOR_INTERVAL"] !== undefined) {
-    config.interval = parseInt(process.env["GIT_CONNECTOR_INTERVAL"]);
+    config.interval = parseInt(process.env["GIT_CONNECTOR_INTERVAL"].trim());
 }
 if (process.env["GIT_CONNECTOR_EXEC"] !== undefined) {
-    config.exec = process.env["GIT_CONNECTOR_EXEC"];
+    config.exec = process.env["GIT_CONNECTOR_EXEC"].trim();
 }
 if (process.env["GIT_CONNECTOR_TARGET"] !== undefined) {
-    config.target = JSON.parse(process.env["GIT_CONNECTOR_TARGET"]);
+    config.target = JSON.parse(process.env["GIT_CONNECTOR_TARGET"].trim());
 }
 if (process.env["GIT_CONNECTOR_KEYS"] !== undefined) {
-    config.keys = JSON.parse(process.env["GIT_CONNECTOR_KEYS"]);
+    config.keys = JSON.parse(process.env["GIT_CONNECTOR_KEYS"].trim());
 }
 if (process.env["GIT_CONNECTOR_UPDATE"] !== undefined) {
-    if (process.env["GIT_CONNECTOR_UPDATE"] === "true") {
+    if (process.env["GIT_CONNECTOR_UPDATE"].trim() === "true") {
         config.update = true;
     } else {
         config.update = false;
     }
 }
 if (process.env["GIT_CONNECTOR_TMP"] !== undefined) {
-    config.tmp = process.env["GIT_CONNECTOR_TMP"];
+    config.tmp = process.env["GIT_CONNECTOR_TMP"].trim();
 }
 if (process.env["GIT_CONNECTOR_CWD"] !== undefined) {
-    config.cwd = process.env["GIT_CONNECTOR_CWD"];
+    config.cwd = process.env["GIT_CONNECTOR_CWD"].trim();
+}
+if (process.env["GIT_CONNECTOR_SCAN_HIDDEN"] !== undefined) {
+    if (process.env["GIT_CONNECTOR_SCAN_HIDDEN"].trim() === "true") {
+        config.scan_hidden = true;
+    } else {
+        config.scan_hidden = false;
+    }
 }
 
 if (config.webhook !== undefined) {
@@ -112,29 +120,7 @@ if (Array.isArray(config.target)) {
     config.target = [];
 }
 
-if (Array.isArray(config.keys)) {
-
-    for (let item of config.keys) {
-    
-        item = item.trim();
-        
-        const full_file_path = resolve(process.cwd(), item);
-    
-        if (!fs.existsSync(full_file_path)) {
-            console.error(chalk.red(`Error. Keys file ${item} not found`));
-            process.exit(1);
-        }
-    
-        const stat = fs.statSync(full_file_path);
-    
-        if (!stat.isFile()) {
-            console.error(chalk.red(`Error. Keys path ${item} not a file`));
-            process.exit(1);
-        }
-    
-    }
-
-} else {
+if (!Array.isArray(config.keys)) {
     config.keys = [];
 }
 
