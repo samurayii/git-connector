@@ -4,6 +4,5 @@ node_modules
 dist
 .DS_Store
 Thumbs.db
-package-lock.json
 tmp
 sync_data

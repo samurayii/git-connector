@@ -8,4 +8,5 @@ export interface IAppConfig {
     cwd: string
     keys: string[]
     scan_hidden: boolean
+    app: string
 }

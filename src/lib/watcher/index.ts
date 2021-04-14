@@ -49,10 +49,10 @@ export class Watcher extends EventEmitter {
 
         try {
             execSync(git_command, {stdio:[]});
-            console.log(`Repository ${this._repository.replace(/\/\/.*:.*@/gi, "//")} is synced`);
+            console.log(`Repository ${chalk.gray(this._repository.replace(/\/\/.*:.*@/gi, "//"))} is synced`);
         } catch (error) {
-            console.error(chalk.red(`Error syncing repository ${this._repository.replace(/\/\/.*:.*@/gi, "//")}`));
-            console.log(chalk.red(error.message));
+            console.error(`${chalk.red("[ERROR]")} Syncing repository ${chalk.gray(this._repository.replace(/\/\/.*:.*@/gi, "//"))}`);
+            console.log(error.message);
             process.exit(1);
         }
         
@@ -78,14 +78,14 @@ export class Watcher extends EventEmitter {
             const full_file_path = resolve(process.cwd(), key_path.trim());
 
             if (!fs.existsSync(full_file_path)) {
-                console.error(chalk.red(`Error. Keys file ${full_file_path} not found`));
+                console.error(`${chalk.red("[ERROR]")} Keys file ${chalk.gray(full_file_path)} not found`);
                 continue;
             }
         
             const stat = fs.statSync(full_file_path);
         
             if (!stat.isFile()) {
-                console.error(chalk.red(`Error. Keys path ${full_file_path} not file`));
+                console.error(`${chalk.red("[ERROR]")} Keys path ${chalk.gray(full_file_path)} not file`);
                 continue;
             }
 
@@ -116,8 +116,8 @@ export class Watcher extends EventEmitter {
         
         
             } catch (error) {
-                console.error(`Error parsing keys file ${full_file_path}. ${error.message}`);
-                console.error(chalk.red(error.stack));
+                console.error(`${chalk.red("[ERROR]")} Parsing keys file ${chalk.gray(full_file_path)}. ${error.message}`);
+                console.error(error.stack);
                 return;
             }
         
@@ -144,7 +144,7 @@ export class Watcher extends EventEmitter {
             return false;
         }
 
-        console.log(`Scanning file ${target}`);
+        console.log(`Scanning file ${chalk.gray(target)}`);
 
         const hash_full_path = resolve(this._hash_folder, `${target.replace(this._repository_folder, "").replace(/(\/|\\)/gi, "_")}.hash`);
         let data = fs.readFileSync(target).toString();
@@ -160,7 +160,6 @@ export class Watcher extends EventEmitter {
         }
 
         if (!fs.existsSync(destination_dirname)) {
-            console.log(destination_dirname);
             fs.mkdirSync(destination_dirname);
         }
 
@@ -168,6 +167,8 @@ export class Watcher extends EventEmitter {
 
             fs.writeFileSync(destination, data);
             fs.writeFileSync(hash_full_path, new_hash);
+
+            console.log(`File ${chalk.gray(destination)} written`);
 
             return true;
 
@@ -177,10 +178,12 @@ export class Watcher extends EventEmitter {
 
             if (old_hash !== new_hash) {
 
-                console.log(`New hash for file ${destination}`);
+                console.log(`New hash for file ${chalk.gray(destination)}`);
 
                 fs.writeFileSync(destination, data);
                 fs.writeFileSync(hash_full_path, new_hash);
+
+                console.log(`File ${chalk.gray(destination)} written`);
 
                 return true;
             }
@@ -196,10 +199,10 @@ export class Watcher extends EventEmitter {
         if (!this._scanThisPath(target)) {
             return false;
         }
-console.log(target);
+
         let update_flag = false;
 
-        console.log(`Scanning directory ${target}`);
+        console.log(`Scanning directory ${chalk.gray(target)}`);
 
         const files = fs.readdirSync(target);
 
@@ -238,7 +241,7 @@ console.log(target);
             const destination_full_path = resolve(process.cwd(), item.destination);
 
             if (!fs.existsSync(target_full_path)) {
-                console.error(chalk.red(`Error. Target ${target_full_path} not found`));
+                console.error(`${chalk.red("[ERROR]")} Target ${chalk.gray(target_full_path)} not found`);
                 break;
             }
 
@@ -277,13 +280,13 @@ console.log(target);
 
                 if (!/(Already up to date|Already up-to-date)/gi.test(stdout.toString())) {
                     repository_change_flag = true;
-                    console.log(`Repository ${this._repository.replace(/\/\/.*:.*@/gi, "//")} has been updated. Changes accepted.`);
+                    console.log(`Repository ${chalk.gray(this._repository.replace(/\/\/.*:.*@/gi, "//"))} has been updated. Changes accepted.`);
                 }
 
             } catch (error) {
                 repository_change_flag = false;
-                console.error(chalk.red(`Git pull repository ${this._repository.replace(/\/\/.*:.*@/gi, "//")} error.`));
-                console.error(chalk.red(error.message));
+                console.error(`${chalk.red("[ERROR]")} Git pull repository ${chalk.gray(this._repository.replace(/\/\/.*:.*@/gi, "//"))} error.`);
+                console.error(error.message);
             }
 
             if (repository_change_flag === true) {

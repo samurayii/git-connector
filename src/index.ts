@@ -26,7 +26,7 @@ type TWatchersList = {
 
 const watchers: TWatchersList = {};
 const watchers_configs: TWatchersConfigsList = {};
-const app = new Starter(config.cwd, config.exec, config.webhook);
+const app = new Starter(config.app, config.cwd, config.exec, config.webhook);
 
 for (const item of config.target) {
 
@@ -100,6 +100,6 @@ app.on("close", () => {
 });
 
 process.on("SIGTERM", () => {
-    console.log("💀 Termination signal received 💀");
+    console.log("Termination signal received");
     closeApp();
 });
