@@ -1,6 +1,6 @@
 {
     "name": "git-connector",
-    "version": "0.2.10",
+    "version": "0.2.11",
     "description": "Git folder or file synchronization",
     "main": "index.js",
     "directories": {
