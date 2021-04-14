@@ -1,6 +1,6 @@
 {
     "name": "git-connector",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "description": "Git folder or file synchronization",
     "main": "index.js",
     "directories": {
@@ -38,17 +38,16 @@
     "homepage": "https://github.com/samurayii/git-connector.git#readme",
     "devDependencies": {
         "@types/chalk": "^2.2.0",
-        "@types/find-package-json": "^1.1.1",
-        "@types/node": "^14.6.4",
+        "@types/node": "^14.14.39",
         "@types/rimraf": "^3.0.0",
-        "@typescript-eslint/eslint-plugin": "^4.0.1",
-        "@typescript-eslint/parser": "^4.0.1",
-        "eslint": "^7.8.1",
-        "json-key-remover": "^0.0.2",
+        "@typescript-eslint/eslint-plugin": "^4.22.0",
+        "@typescript-eslint/parser": "^4.22.0",
+        "eslint": "^7.24.0",
+        "json-key-remover": "^0.0.3",
         "ncp": "^2.0.0",
-        "npm-check-updates": "^8.0.5",
-        "ts-node": "^9.0.0",
-        "typescript": "^4.0.2"
+        "npm-check-updates": "^11.4.1",
+        "ts-node": "^9.1.1",
+        "typescript": "^4.2.4"
     },
     "remover": {
         "target": "./package.json",
@@ -60,10 +59,9 @@
         ]
     },
     "dependencies": {
-        "axios": "^0.20.0",
+        "axios": "^0.21.1",
         "chalk": "^4.1.0",
-        "commander": "^6.1.0",
-        "find-package-json": "^1.2.0",
+        "commander": "^7.2.0",
         "rimraf": "^3.0.2"
     }
 }

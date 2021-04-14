@@ -1,4 +1,4 @@
-import { program } from "commander";
+import { Command } from "commander";
 import * as chalk from "chalk";
 import { execSync } from "child_process";
 import { IAppConfig } from "./interfaces";
@@ -26,6 +26,7 @@ const findPkg = (): TPackage => {
     }
 };
 
+const program = new Command();
 const pkg = findPkg();
 
 if (pkg === undefined) {
@@ -48,17 +49,19 @@ program.option("-a, --app <type>", "App name (Environment variable: GIT_CONNECTO
 
 program.parse(process.argv);
 
+const options = program.opts();
+
 const config: IAppConfig = {
-    webhook: program.webhook,
-    interval: parseInt(program.interval),
-    exec: program.exec,
-    target: program.target,
-    update: program.update,
-    tmp: program.tmp,
-    cwd: program.cwd,
-    keys: program.keys,
-    scan_hidden: program.scan_hidden,
-    app: program.app
+    webhook: options.webhook,
+    interval: parseInt(options.interval),
+    exec: options.exec,
+    target: options.target,
+    update: options.update,
+    tmp: options.tmp,
+    cwd: options.cwd,
+    keys: options.keys,
+    scan_hidden: options.scan_hidden,
+    app: options.app
 };
 
 if (process.env["GIT_CONNECTOR_WEBHOOK"] !== undefined) {
