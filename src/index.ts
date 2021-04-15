@@ -26,7 +26,6 @@ type TWatchersList = {
 
 const watchers: TWatchersList = {};
 const watchers_configs: TWatchersConfigsList = {};
-const app = new Starter(config.app, config.cwd, config.exec, config.webhook);
 
 for (const item of config.target) {
 
@@ -69,9 +68,30 @@ for (const watcher_name in watchers_configs) {
 
     if (config.update === true) {
 
-        watcher.on("update", () => {
-            app.update();
-        });
+        if (config.exec !== undefined) {
+
+            const app = new Starter(config.app, config.cwd, config.exec, config.webhook);
+
+            app.start();
+
+            app.on("close", () => {
+
+                app.close();
+            
+                for (const watcher_name in watchers) {
+                    const watcher = watchers[watcher_name];
+                    watcher.close();
+                }
+            
+                process.exit();
+            
+            });
+
+            watcher.on("update", () => {
+                app.update();
+            });
+
+        }      
 
         console.log("Watcher activated");
 
@@ -80,26 +100,6 @@ for (const watcher_name in watchers_configs) {
 
 }
 
-const closeApp = () => {
-
-    app.close();
-
-    for (const watcher_name in watchers) {
-        const watcher = watchers[watcher_name];
-        watcher.close();
-    }
-
-    process.exit();
-
-};
-
-app.start();
-
-app.on("close", () => {
-    closeApp();
-});
-
 process.on("SIGTERM", () => {
     console.log("Termination signal received");
-    closeApp();
 });

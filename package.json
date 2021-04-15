@@ -1,6 +1,6 @@
 {
     "name": "git-connector",
-    "version": "0.2.11",
+    "version": "0.3.11",
     "description": "Git folder or file synchronization",
     "main": "index.js",
     "directories": {
@@ -17,6 +17,7 @@
         "lint": "eslint \"./src/**/*.{js,ts}\" --quiet --fix && tsc --noEmit",
         "start": "ts-node ./src/index.ts",
         "test": "npm run test:full-repository && npm run test:webhook",
+        "test:dir": "ts-node ./src/index.ts -u -i 5 -t https://github.com/samurayii/git-connector.git:master:/:sync_data",
         "test:full-repository": "ts-node ./src/index.ts -i 5 -a app-test -e \"node ./tests/test_app.js\" -k ./tests/args1.json ./tests/args2.json -t https://github.com/samurayii/git-connector.git:master:/:sync_data",
         "test:webhook": "ts-node ./src/index.ts -e \"node ./test_app.js\" -t \"https://github.com/samurayii/git-connector.git:master:/README.md:./tmp/README_pull.md\" -tmp ./tmp -i 5 -w \"http://127.0.0.1:3000/\" -k ./tests/args1.json ./tests/args2.json -c ./tests"
     },

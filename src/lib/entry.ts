@@ -116,13 +116,10 @@ if (config.webhook !== undefined) {
     }
 }
 
+
+
 if (config.interval <= 0) {
     console.error(chalk.red("Error. Interval key must be more than 0"));
-    process.exit(1);
-}
-
-if (config.exec === undefined) {
-    console.error(`${chalk.red("[ERROR]")} Key --exec or -e is empty`);
     process.exit(1);
 }
 
@@ -136,14 +133,12 @@ if (config.cwd.length === undefined) {
     process.exit(1);
 }
 
-config.exec = config.exec.trim();
+if (config.exec !== undefined) {
+    config.exec = config.exec.trim();
+}
+
 config.tmp = config.tmp.trim();
 config.cwd = config.cwd.trim();
-
-if (config.exec.length <= 0) {
-    console.error(`${chalk.red("[ERROR]")} Key --exec or -e is empty`);
-    process.exit(1);
-}
 
 if (config.tmp.length <= 0) {
     console.error(`${chalk.red("[ERROR]")} Key --tmp or -tmp is empty`);
