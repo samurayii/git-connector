@@ -42,8 +42,12 @@ export class Watcher extends EventEmitter {
         this._repository_folder = resolve(this._tmp_folder, "repository");
         this._hash_folder = resolve(this._tmp_folder, "hash");
 
-        fs.mkdirSync(this._tmp_folder);
-        fs.mkdirSync(this._hash_folder);
+        fs.mkdirSync(this._tmp_folder, {
+            recursive: true
+        });
+        fs.mkdirSync(this._hash_folder, {
+            recursive: true
+        });
 
         const git_command = `git clone --single-branch --branch ${this._branch} --depth 1 ${this._repository} ${this._repository_folder}`;
 
@@ -156,11 +160,15 @@ export class Watcher extends EventEmitter {
         const destination_dirname = dirname(destination);
 
         if (!fs.existsSync(hash_dirname)) {
-            fs.mkdirSync(hash_dirname);
+            fs.mkdirSync(hash_dirname, {
+                recursive: true
+            });
         }
 
         if (!fs.existsSync(destination_dirname)) {
-            fs.mkdirSync(destination_dirname);
+            fs.mkdirSync(destination_dirname, {
+                recursive: true
+            });
         }
 
         if (!fs.existsSync(hash_full_path)) {
