@@ -2,6 +2,8 @@
 import config from "./lib/entry";
 import { Watcher } from "./lib/watcher";
 import { Starter } from "./lib/starter";
+import { sync } from "rimraf";
+import * as fs from "fs";
 
 type TWatcherTarget = {
     destination: string
@@ -59,10 +61,16 @@ for (const item of config.target) {
 
 }
 
+let i = 0;
+
+if (fs.existsSync(config.tmp)) {
+    sync(config.tmp);
+}
+
 for (const watcher_name in watchers_configs) {
 
     const watcher_config = watchers_configs[watcher_name];
-    const watcher = new Watcher(watcher_config.repository, watcher_config.branch, config.tmp, watcher_config.targets, config.keys, config.scan_hidden);
+    const watcher = new Watcher(`watcher_${i}`,watcher_config.repository, watcher_config.branch, config.tmp, watcher_config.targets, config.keys, config.scan_hidden);
     
     watchers[watcher_config.repository] = watcher;
 
@@ -93,11 +101,12 @@ for (const watcher_name in watchers_configs) {
 
         }      
 
-        console.log("Watcher activated");
+        console.log(`Watcher ${i} activated`);
 
         watcher.watch(config.interval);
     }
 
+    i++;
 }
 
 process.on("SIGTERM", () => {

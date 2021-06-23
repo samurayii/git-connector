@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as chalk from "chalk";
 import { resolve, dirname } from "path";
-import { sync } from "rimraf";
 import { EventEmitter } from "events";
 import { execSync } from "child_process";
 import * as crypto from "crypto";
@@ -25,6 +24,7 @@ export class Watcher extends EventEmitter {
     private _keys: TKeys
     
     constructor (
+        private readonly _id: string,
         private readonly _repository: string,
         private readonly _branch: string,
         private readonly _tmp_folder: string,
@@ -35,12 +35,8 @@ export class Watcher extends EventEmitter {
 
         super();
 
-        if (fs.existsSync(this._tmp_folder)) {
-            sync(this._tmp_folder);
-        }
-
-        this._repository_folder = resolve(this._tmp_folder, "repository");
-        this._hash_folder = resolve(this._tmp_folder, "hash");
+        this._repository_folder = resolve(this._tmp_folder, `repository/${this._id}`);
+        this._hash_folder = resolve(this._tmp_folder, `hash/${this._id}`);
 
         fs.mkdirSync(this._tmp_folder, {
             recursive: true
@@ -294,7 +290,7 @@ export class Watcher extends EventEmitter {
             } catch (error) {
                 repository_change_flag = false;
                 console.error(`${chalk.red("[ERROR]")} Git pull repository ${chalk.gray(this._repository.replace(/\/\/.*:.*@/gi, "//"))} error.`);
-                console.error(error.message);
+                console.error(error);
             }
 
             if (repository_change_flag === true) {
